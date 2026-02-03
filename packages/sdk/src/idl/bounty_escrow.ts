@@ -6,25 +6,27 @@ export type BountyEscrow = {
   instructions: [
     {
       name: "initClient";
+      discriminator: number[];
       accounts: [
-        { name: "clientState"; isMut: true; isSigner: false },
-        { name: "client"; isMut: true; isSigner: true },
-        { name: "systemProgram"; isMut: false; isSigner: false }
+        { name: "clientState"; writable: true },
+        { name: "client"; writable: true; signer: true },
+        { name: "systemProgram" }
       ];
       args: [];
     },
     {
       name: "createBounty";
+      discriminator: number[];
       accounts: [
-        { name: "clientState"; isMut: true; isSigner: false },
-        { name: "bounty"; isMut: true; isSigner: false },
-        { name: "vault"; isMut: true; isSigner: false },
-        { name: "client"; isMut: true; isSigner: true },
-        { name: "clientTokenAccount"; isMut: true; isSigner: false },
-        { name: "usdcMint"; isMut: false; isSigner: false },
-        { name: "tokenProgram"; isMut: false; isSigner: false },
-        { name: "systemProgram"; isMut: false; isSigner: false },
-        { name: "rent"; isMut: false; isSigner: false }
+        { name: "clientState"; writable: true },
+        { name: "bounty"; writable: true },
+        { name: "vault"; writable: true },
+        { name: "client"; writable: true; signer: true },
+        { name: "clientTokenAccount"; writable: true },
+        { name: "usdcMint" },
+        { name: "tokenProgram" },
+        { name: "systemProgram" },
+        { name: "rent" }
       ];
       args: [
         { name: "metadataUri"; type: "string" },
@@ -34,57 +36,63 @@ export type BountyEscrow = {
     },
     {
       name: "claimBounty";
+      discriminator: number[];
       accounts: [
-        { name: "bounty"; isMut: true; isSigner: false },
-        { name: "agent"; isMut: false; isSigner: true }
+        { name: "bounty"; writable: true },
+        { name: "agent"; signer: true }
       ];
       args: [];
     },
     {
       name: "submitWork";
+      discriminator: number[];
       accounts: [
-        { name: "bounty"; isMut: true; isSigner: false },
-        { name: "agent"; isMut: false; isSigner: true }
+        { name: "bounty"; writable: true },
+        { name: "agent"; signer: true }
       ];
       args: [{ name: "deliverableUri"; type: "string" }];
     },
     {
       name: "approveWork";
+      discriminator: number[];
       accounts: [
-        { name: "bounty"; isMut: true; isSigner: false },
-        { name: "vault"; isMut: true; isSigner: false },
-        { name: "agentTokenAccount"; isMut: true; isSigner: false },
-        { name: "client"; isMut: false; isSigner: true },
-        { name: "tokenProgram"; isMut: false; isSigner: false }
+        { name: "bounty"; writable: true },
+        { name: "vault"; writable: true },
+        { name: "agentTokenAccount"; writable: true },
+        { name: "client"; signer: true },
+        { name: "tokenProgram" }
       ];
       args: [];
     },
     {
       name: "disputeBounty";
+      discriminator: number[];
       accounts: [
-        { name: "bounty"; isMut: true; isSigner: false },
-        { name: "authority"; isMut: false; isSigner: true }
+        { name: "bounty"; writable: true },
+        { name: "authority"; signer: true }
       ];
       args: [];
     },
     {
       name: "cancelBounty";
+      discriminator: number[];
       accounts: [
-        { name: "bounty"; isMut: true; isSigner: false },
-        { name: "vault"; isMut: true; isSigner: false },
-        { name: "clientTokenAccount"; isMut: true; isSigner: false },
-        { name: "client"; isMut: true; isSigner: true },
-        { name: "tokenProgram"; isMut: false; isSigner: false }
+        { name: "bounty"; writable: true },
+        { name: "vault"; writable: true },
+        { name: "clientTokenAccount"; writable: true },
+        { name: "client"; writable: true; signer: true },
+        { name: "tokenProgram" }
       ];
       args: [];
     },
     {
       name: "leaveReview";
+      discriminator: number[];
       accounts: [
-        { name: "bounty"; isMut: false; isSigner: false },
-        { name: "review"; isMut: true; isSigner: false },
-        { name: "client"; isMut: true; isSigner: true },
-        { name: "systemProgram"; isMut: false; isSigner: false }
+        { name: "bounty" },
+        { name: "review"; writable: true },
+        { name: "client"; writable: true; signer: true },
+        { name: "systemProgram" }
       ];
       args: [
         { name: "rating"; type: "u64" },
@@ -93,12 +101,17 @@ export type BountyEscrow = {
     }
   ];
   accounts: [
+    { name: "clientState"; discriminator: number[] },
+    { name: "bounty"; discriminator: number[] },
+    { name: "review"; discriminator: number[] }
+  ];
+  types: [
     {
       name: "clientState";
       type: {
         kind: "struct";
         fields: [
-          { name: "owner"; type: "publicKey" },
+          { name: "owner"; type: "pubkey" },
           { name: "bountyCount"; type: "u64" },
           { name: "bump"; type: "u8" }
         ];
@@ -109,17 +122,17 @@ export type BountyEscrow = {
       type: {
         kind: "struct";
         fields: [
-          { name: "client"; type: "publicKey" },
+          { name: "client"; type: "pubkey" },
           { name: "bountyId"; type: "u64" },
           { name: "metadataUri"; type: "string" },
           { name: "budget"; type: "u64" },
           { name: "deadline"; type: "i64" },
           { name: "status"; type: "u8" },
           { name: "claims"; type: "u64" },
-          { name: "assignedAgent"; type: "publicKey" },
+          { name: "assignedAgent"; type: "pubkey" },
           { name: "deliverableUri"; type: "string" },
-          { name: "vault"; type: "publicKey" },
-          { name: "usdcMint"; type: "publicKey" },
+          { name: "vault"; type: "pubkey" },
+          { name: "usdcMint"; type: "pubkey" },
           { name: "bump"; type: "u8" },
           { name: "createdAt"; type: "i64" }
         ];
@@ -130,9 +143,9 @@ export type BountyEscrow = {
       type: {
         kind: "struct";
         fields: [
-          { name: "bounty"; type: "publicKey" },
-          { name: "reviewer"; type: "publicKey" },
-          { name: "agent"; type: "publicKey" },
+          { name: "bounty"; type: "pubkey" },
+          { name: "reviewer"; type: "pubkey" },
+          { name: "agent"; type: "pubkey" },
           { name: "rating"; type: "u64" },
           { name: "commentUri"; type: "string" },
           { name: "bump"; type: "u8" },
@@ -164,25 +177,27 @@ export const IDL: BountyEscrow = {
   instructions: [
     {
       name: "initClient",
+      discriminator: [30, 50, 186, 118, 60, 68, 27, 155],
       accounts: [
-        { name: "clientState", isMut: true, isSigner: false },
-        { name: "client", isMut: true, isSigner: true },
-        { name: "systemProgram", isMut: false, isSigner: false },
+        { name: "clientState", writable: true },
+        { name: "client", writable: true, signer: true },
+        { name: "systemProgram" },
       ],
       args: [],
     },
     {
       name: "createBounty",
+      discriminator: [122, 90, 14, 143, 8, 125, 200, 2],
       accounts: [
-        { name: "clientState", isMut: true, isSigner: false },
-        { name: "bounty", isMut: true, isSigner: false },
-        { name: "vault", isMut: true, isSigner: false },
-        { name: "client", isMut: true, isSigner: true },
-        { name: "clientTokenAccount", isMut: true, isSigner: false },
-        { name: "usdcMint", isMut: false, isSigner: false },
-        { name: "tokenProgram", isMut: false, isSigner: false },
-        { name: "systemProgram", isMut: false, isSigner: false },
-        { name: "rent", isMut: false, isSigner: false },
+        { name: "clientState", writable: true },
+        { name: "bounty", writable: true },
+        { name: "vault", writable: true },
+        { name: "client", writable: true, signer: true },
+        { name: "clientTokenAccount", writable: true },
+        { name: "usdcMint" },
+        { name: "tokenProgram" },
+        { name: "systemProgram" },
+        { name: "rent" },
       ],
       args: [
         { name: "metadataUri", type: "string" },
@@ -192,57 +207,63 @@ export const IDL: BountyEscrow = {
     },
     {
       name: "claimBounty",
+      discriminator: [225, 157, 163, 238, 239, 169, 75, 226],
       accounts: [
-        { name: "bounty", isMut: true, isSigner: false },
-        { name: "agent", isMut: false, isSigner: true },
+        { name: "bounty", writable: true },
+        { name: "agent", signer: true },
       ],
       args: [],
     },
     {
       name: "submitWork",
+      discriminator: [158, 80, 101, 51, 114, 130, 101, 253],
       accounts: [
-        { name: "bounty", isMut: true, isSigner: false },
-        { name: "agent", isMut: false, isSigner: true },
+        { name: "bounty", writable: true },
+        { name: "agent", signer: true },
       ],
       args: [{ name: "deliverableUri", type: "string" }],
     },
     {
       name: "approveWork",
+      discriminator: [181, 118, 45, 143, 204, 88, 237, 109],
       accounts: [
-        { name: "bounty", isMut: true, isSigner: false },
-        { name: "vault", isMut: true, isSigner: false },
-        { name: "agentTokenAccount", isMut: true, isSigner: false },
-        { name: "client", isMut: false, isSigner: true },
-        { name: "tokenProgram", isMut: false, isSigner: false },
+        { name: "bounty", writable: true },
+        { name: "vault", writable: true },
+        { name: "agentTokenAccount", writable: true },
+        { name: "client", signer: true },
+        { name: "tokenProgram" },
       ],
       args: [],
     },
     {
       name: "disputeBounty",
+      discriminator: [240, 83, 213, 95, 60, 48, 48, 29],
       accounts: [
-        { name: "bounty", isMut: true, isSigner: false },
-        { name: "authority", isMut: false, isSigner: true },
+        { name: "bounty", writable: true },
+        { name: "authority", signer: true },
       ],
       args: [],
     },
     {
       name: "cancelBounty",
+      discriminator: [79, 65, 107, 143, 128, 165, 135, 46],
       accounts: [
-        { name: "bounty", isMut: true, isSigner: false },
-        { name: "vault", isMut: true, isSigner: false },
-        { name: "clientTokenAccount", isMut: true, isSigner: false },
-        { name: "client", isMut: true, isSigner: true },
-        { name: "tokenProgram", isMut: false, isSigner: false },
+        { name: "bounty", writable: true },
+        { name: "vault", writable: true },
+        { name: "clientTokenAccount", writable: true },
+        { name: "client", writable: true, signer: true },
+        { name: "tokenProgram" },
       ],
       args: [],
     },
     {
       name: "leaveReview",
+      discriminator: [117, 81, 110, 222, 0, 51, 250, 47],
       accounts: [
-        { name: "bounty", isMut: false, isSigner: false },
-        { name: "review", isMut: true, isSigner: false },
-        { name: "client", isMut: true, isSigner: true },
-        { name: "systemProgram", isMut: false, isSigner: false },
+        { name: "bounty" },
+        { name: "review", writable: true },
+        { name: "client", writable: true, signer: true },
+        { name: "systemProgram" },
       ],
       args: [
         { name: "rating", type: "u64" },
@@ -251,12 +272,17 @@ export const IDL: BountyEscrow = {
     },
   ],
   accounts: [
+    { name: "clientState", discriminator: [147, 10, 249, 80, 145, 124, 219, 60] },
+    { name: "bounty", discriminator: [237, 16, 105, 198, 19, 69, 242, 234] },
+    { name: "review", discriminator: [124, 63, 203, 215, 226, 30, 222, 15] },
+  ],
+  types: [
     {
       name: "clientState",
       type: {
         kind: "struct",
         fields: [
-          { name: "owner", type: "publicKey" },
+          { name: "owner", type: "pubkey" },
           { name: "bountyCount", type: "u64" },
           { name: "bump", type: "u8" },
         ],
@@ -267,17 +293,17 @@ export const IDL: BountyEscrow = {
       type: {
         kind: "struct",
         fields: [
-          { name: "client", type: "publicKey" },
+          { name: "client", type: "pubkey" },
           { name: "bountyId", type: "u64" },
           { name: "metadataUri", type: "string" },
           { name: "budget", type: "u64" },
           { name: "deadline", type: "i64" },
           { name: "status", type: "u8" },
           { name: "claims", type: "u64" },
-          { name: "assignedAgent", type: "publicKey" },
+          { name: "assignedAgent", type: "pubkey" },
           { name: "deliverableUri", type: "string" },
-          { name: "vault", type: "publicKey" },
-          { name: "usdcMint", type: "publicKey" },
+          { name: "vault", type: "pubkey" },
+          { name: "usdcMint", type: "pubkey" },
           { name: "bump", type: "u8" },
           { name: "createdAt", type: "i64" },
         ],
@@ -288,9 +314,9 @@ export const IDL: BountyEscrow = {
       type: {
         kind: "struct",
         fields: [
-          { name: "bounty", type: "publicKey" },
-          { name: "reviewer", type: "publicKey" },
-          { name: "agent", type: "publicKey" },
+          { name: "bounty", type: "pubkey" },
+          { name: "reviewer", type: "pubkey" },
+          { name: "agent", type: "pubkey" },
           { name: "rating", type: "u64" },
           { name: "commentUri", type: "string" },
           { name: "bump", type: "u8" },

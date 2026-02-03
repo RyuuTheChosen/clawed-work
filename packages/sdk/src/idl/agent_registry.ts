@@ -6,10 +6,11 @@ export type AgentRegistry = {
   instructions: [
     {
       name: "registerAgent";
+      discriminator: number[];
       accounts: [
-        { name: "agent"; isMut: true; isSigner: false },
-        { name: "owner"; isMut: true; isSigner: true },
-        { name: "systemProgram"; isMut: false; isSigner: false }
+        { name: "agent"; writable: true },
+        { name: "owner"; writable: true; signer: true },
+        { name: "systemProgram" }
       ];
       args: [
         { name: "metadataUri"; type: "string" },
@@ -18,9 +19,10 @@ export type AgentRegistry = {
     },
     {
       name: "updateAgent";
+      discriminator: number[];
       accounts: [
-        { name: "agent"; isMut: true; isSigner: false },
-        { name: "owner"; isMut: false; isSigner: true }
+        { name: "agent"; writable: true },
+        { name: "owner"; signer: true }
       ];
       args: [
         { name: "metadataUri"; type: { option: "string" } },
@@ -30,17 +32,19 @@ export type AgentRegistry = {
     },
     {
       name: "updateReputation";
+      discriminator: number[];
       accounts: [
-        { name: "agent"; isMut: true; isSigner: false },
-        { name: "authority"; isMut: false; isSigner: true }
+        { name: "agent"; writable: true },
+        { name: "authority"; signer: true }
       ];
       args: [{ name: "newRating"; type: "u64" }];
     },
     {
       name: "addEarnings";
+      discriminator: number[];
       accounts: [
-        { name: "agent"; isMut: true; isSigner: false },
-        { name: "authority"; isMut: false; isSigner: true }
+        { name: "agent"; writable: true },
+        { name: "authority"; signer: true }
       ];
       args: [{ name: "amount"; type: "u64" }];
     }
@@ -48,10 +52,16 @@ export type AgentRegistry = {
   accounts: [
     {
       name: "agent";
+      discriminator: number[];
+    }
+  ];
+  types: [
+    {
+      name: "agent";
       type: {
         kind: "struct";
         fields: [
-          { name: "owner"; type: "publicKey" },
+          { name: "owner"; type: "pubkey" },
           { name: "metadataUri"; type: "string" },
           { name: "hourlyRate"; type: "u64" },
           { name: "reputation"; type: "u64" },
@@ -80,10 +90,11 @@ export const IDL: AgentRegistry = {
   instructions: [
     {
       name: "registerAgent",
+      discriminator: [135, 157, 66, 195, 2, 113, 175, 30],
       accounts: [
-        { name: "agent", isMut: true, isSigner: false },
-        { name: "owner", isMut: true, isSigner: true },
-        { name: "systemProgram", isMut: false, isSigner: false },
+        { name: "agent", writable: true },
+        { name: "owner", writable: true, signer: true },
+        { name: "systemProgram" },
       ],
       args: [
         { name: "metadataUri", type: "string" },
@@ -92,9 +103,10 @@ export const IDL: AgentRegistry = {
     },
     {
       name: "updateAgent",
+      discriminator: [85, 2, 178, 9, 119, 139, 102, 164],
       accounts: [
-        { name: "agent", isMut: true, isSigner: false },
-        { name: "owner", isMut: false, isSigner: true },
+        { name: "agent", writable: true },
+        { name: "owner", signer: true },
       ],
       args: [
         { name: "metadataUri", type: { option: "string" } },
@@ -104,17 +116,19 @@ export const IDL: AgentRegistry = {
     },
     {
       name: "updateReputation",
+      discriminator: [194, 220, 43, 201, 54, 209, 49, 178],
       accounts: [
-        { name: "agent", isMut: true, isSigner: false },
-        { name: "authority", isMut: false, isSigner: true },
+        { name: "agent", writable: true },
+        { name: "authority", signer: true },
       ],
       args: [{ name: "newRating", type: "u64" }],
     },
     {
       name: "addEarnings",
+      discriminator: [33, 238, 51, 61, 134, 44, 42, 111],
       accounts: [
-        { name: "agent", isMut: true, isSigner: false },
-        { name: "authority", isMut: false, isSigner: true },
+        { name: "agent", writable: true },
+        { name: "authority", signer: true },
       ],
       args: [{ name: "amount", type: "u64" }],
     },
@@ -122,10 +136,16 @@ export const IDL: AgentRegistry = {
   accounts: [
     {
       name: "agent",
+      discriminator: [47, 166, 112, 147, 155, 197, 86, 7],
+    },
+  ],
+  types: [
+    {
+      name: "agent",
       type: {
         kind: "struct",
         fields: [
-          { name: "owner", type: "publicKey" },
+          { name: "owner", type: "pubkey" },
           { name: "metadataUri", type: "string" },
           { name: "hourlyRate", type: "u64" },
           { name: "reputation", type: "u64" },
