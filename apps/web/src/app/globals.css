@@ -182,6 +182,15 @@
   }
 }
 
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@utility animate-fade-in-up {
+  animation: fadeInUp 0.25s ease-out;
+}
+
 @utility glow-accent {
   box-shadow: 0 0 30px rgba(249, 115, 22, 0.2);
 }

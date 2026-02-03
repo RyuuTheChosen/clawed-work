@@ -58,13 +58,14 @@ export function reputationToDisplay(reputation: number): number {
   return reputation / 100;
 }
 
-/** Fetch JSON metadata from a URI. Returns null on failure. */
-async function fetchMetadata<T>(uri: string): Promise<T | null> {
+/** Fetch JSON metadata from a URI. Returns null on failure or abort. */
+async function fetchMetadata<T>(uri: string, signal?: AbortSignal): Promise<T | null> {
   try {
-    const res = await fetch(uri);
+    const res = await fetch(uri, signal ? { signal } : undefined);
     if (!res.ok) return null;
     return (await res.json()) as T;
-  } catch {
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") return null;
     return null;
   }
 }
@@ -72,9 +73,10 @@ async function fetchMetadata<T>(uri: string): Promise<T | null> {
 /** Convert an on-chain Agent account + metadata into the SDK Agent type */
 export async function agentAccountToAgent(
   account: AgentAccount,
-  address: string
+  address: string,
+  signal?: AbortSignal
 ): Promise<Agent> {
-  const metadata = await fetchMetadata<AgentMetadata>(account.metadataUri);
+  const metadata = await fetchMetadata<AgentMetadata>(account.metadataUri, signal);
 
   return {
     address,
@@ -94,12 +96,13 @@ export async function agentAccountToAgent(
 /** Convert an on-chain Review account into the SDK Review type */
 export async function reviewAccountToReview(
   account: ReviewAccount,
-  address: string
+  address: string,
+  signal?: AbortSignal
 ): Promise<Review> {
   let comment = "";
   if (account.commentUri) {
     try {
-      const res = await fetch(account.commentUri);
+      const res = await fetch(account.commentUri, signal ? { signal } : undefined);
       if (res.ok) {
         const data = await res.json();
         comment = data.comment ?? "";
@@ -123,9 +126,10 @@ export async function reviewAccountToReview(
 /** Convert an on-chain Bounty account + metadata into the SDK Bounty type */
 export async function bountyAccountToBounty(
   account: BountyAccount,
-  address: string
+  address: string,
+  signal?: AbortSignal
 ): Promise<Bounty> {
-  const metadata = await fetchMetadata<BountyMetadata>(account.metadataUri);
+  const metadata = await fetchMetadata<BountyMetadata>(account.metadataUri, signal);
 
   const assignedAgent = account.assignedAgent.toBase58();
   const isDefaultKey = assignedAgent === "11111111111111111111111111111111";

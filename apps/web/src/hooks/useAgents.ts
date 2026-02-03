@@ -21,39 +21,50 @@ interface UseAgentsResult {
 
 export function useAgents(): UseAgentsResult {
   const program = useAgentRegistryProgram();
-  const [agents, setAgents] = useState<Agent[]>(mockAgents);
+  const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fetchTrigger, setFetchTrigger] = useState(0);
 
-  const refetch = useCallback(async () => {
-    if (!program) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const accounts = await fetchAllAgents(program);
-      if (accounts.length === 0) {
-        // No on-chain agents yet, keep mock data
-        setAgents(mockAgents);
-        return;
-      }
-      const resolved = await Promise.all(
-        accounts.map((a) =>
-          agentAccountToAgent(a.account, a.publicKey.toBase58())
-        )
-      );
-      setAgents(resolved);
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch agents");
-      // Fall back to mock data on error
-      setAgents(mockAgents);
-    } finally {
-      setLoading(false);
-    }
-  }, [program]);
+  const refetch = useCallback(() => setFetchTrigger((n) => n + 1), []);
 
   useEffect(() => {
-    refetch();
-  }, [refetch]);
+    if (!program) return;
+
+    const controller = new AbortController();
+    let cancelled = false;
+
+    async function load() {
+      setLoading(true);
+      setError(null);
+      try {
+        const accounts = await fetchAllAgents(program!);
+        if (cancelled) return;
+        if (accounts.length === 0) {
+          setAgents(mockAgents);
+          return;
+        }
+        const resolved = await Promise.all(
+          accounts.map((a) =>
+            agentAccountToAgent(a.account, a.publicKey.toBase58(), controller.signal)
+          )
+        );
+        if (!cancelled) setAgents(resolved);
+      } catch (err: any) {
+        if (cancelled) return;
+        setError(err.message || "Failed to fetch agents");
+        setAgents(mockAgents);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, [program, fetchTrigger]);
 
   return { agents, loading, error, refetch };
 }
@@ -71,38 +82,46 @@ export function useAgent(address: string): UseAgentResult {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
+    let cancelled = false;
+
     async function load() {
       setLoading(true);
       setError(null);
 
-      // Try mock data first
       const mockMatch = mockAgents.find((a) => a.address === address);
 
       if (!program) {
-        setAgent(mockMatch || null);
-        setLoading(false);
+        if (!cancelled) {
+          setAgent(mockMatch || null);
+          setLoading(false);
+        }
         return;
       }
 
       try {
-        // Try to interpret address as a wallet pubkey and derive agent PDA
         const ownerKey = new PublicKey(address);
         const account = await fetchAgentAccount(program, ownerKey);
+        if (cancelled) return;
         if (account) {
           const [agentPda] = deriveAgentPDA(ownerKey);
-          const resolved = await agentAccountToAgent(account, agentPda.toBase58());
-          setAgent(resolved);
+          const resolved = await agentAccountToAgent(account, agentPda.toBase58(), controller.signal);
+          if (!cancelled) setAgent(resolved);
         } else {
-          // Fall back to mock
-          setAgent(mockMatch || null);
+          if (!cancelled) setAgent(mockMatch || null);
         }
       } catch {
-        setAgent(mockMatch || null);
+        if (!cancelled) setAgent(mockMatch || null);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
     load();
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
   }, [address, program]);
 
   return { agent, loading, error };

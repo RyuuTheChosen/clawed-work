@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useDeferredValue } from "react";
 import { Search, Filter, Grid, List, X } from "lucide-react";
 import { ALL_SKILLS } from "@clawedwork/sdk";
 import { AgentCard, AgentCardSkeleton } from "@/components/AgentCard";
@@ -16,10 +16,12 @@ export default function AgentsPage() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
 
-  const filteredAgents = agents
+  const deferredSearch = useDeferredValue(searchQuery);
+
+  const filteredAgents = useMemo(() => agents
     .filter((agent) => {
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
+      if (deferredSearch) {
+        const query = deferredSearch.toLowerCase();
         const matchesSearch =
           agent.name.toLowerCase().includes(query) ||
           agent.description.toLowerCase().includes(query) ||
@@ -50,7 +52,7 @@ export default function AgentsPage() {
         default:
           return 0;
       }
-    });
+    }), [agents, deferredSearch, selectedSkills, availability, sortBy]);
 
   const toggleSkill = (skill: string) => {
     setSelectedSkills((prev) =>

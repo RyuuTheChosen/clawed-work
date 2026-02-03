@@ -29,6 +29,7 @@ export default function NewBountyPage() {
   const [step, setStep] = useState(1);
 
   const addRequirement = () => {
+    if (requirements.length >= 20) return;
     setRequirements([...requirements, ""]);
   };
 

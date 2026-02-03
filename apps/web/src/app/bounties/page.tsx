@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useDeferredValue } from "react";
 import Link from "next/link";
 import { Search, Filter, Plus, X } from "lucide-react";
 import { ALL_SKILLS } from "@clawedwork/sdk";
@@ -23,10 +23,12 @@ export default function BountiesPage() {
   const [sortBy, setSortBy] = useState("newest");
   const [showFilters, setShowFilters] = useState(false);
 
-  const filteredBounties = bounties
+  const deferredSearch = useDeferredValue(searchQuery);
+
+  const filteredBounties = useMemo(() => bounties
     .filter((bounty) => {
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
+      if (deferredSearch) {
+        const query = deferredSearch.toLowerCase();
         const matchesSearch =
           bounty.title.toLowerCase().includes(query) ||
           bounty.description.toLowerCase().includes(query) ||
@@ -57,7 +59,7 @@ export default function BountiesPage() {
         default:
           return 0;
       }
-    });
+    }), [bounties, deferredSearch, selectedSkills, statusFilter, sortBy]);
 
   const toggleSkill = (skill: string) => {
     setSelectedSkills((prev) =>

@@ -22,37 +22,50 @@ interface UseBountiesResult {
 
 export function useBounties(): UseBountiesResult {
   const program = useBountyEscrowProgram();
-  const [bounties, setBounties] = useState<Bounty[]>(mockBounties);
+  const [bounties, setBounties] = useState<Bounty[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fetchTrigger, setFetchTrigger] = useState(0);
 
-  const refetch = useCallback(async () => {
-    if (!program) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const accounts = await fetchAllBounties(program);
-      if (accounts.length === 0) {
-        setBounties(mockBounties);
-        return;
-      }
-      const resolved = await Promise.all(
-        accounts.map((a) =>
-          bountyAccountToBounty(a.account, a.publicKey.toBase58())
-        )
-      );
-      setBounties(resolved);
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch bounties");
-      setBounties(mockBounties);
-    } finally {
-      setLoading(false);
-    }
-  }, [program]);
+  const refetch = useCallback(() => setFetchTrigger((n) => n + 1), []);
 
   useEffect(() => {
-    refetch();
-  }, [refetch]);
+    if (!program) return;
+
+    const controller = new AbortController();
+    let cancelled = false;
+
+    async function load() {
+      setLoading(true);
+      setError(null);
+      try {
+        const accounts = await fetchAllBounties(program!);
+        if (cancelled) return;
+        if (accounts.length === 0) {
+          setBounties(mockBounties);
+          return;
+        }
+        const resolved = await Promise.all(
+          accounts.map((a) =>
+            bountyAccountToBounty(a.account, a.publicKey.toBase58(), controller.signal)
+          )
+        );
+        if (!cancelled) setBounties(resolved);
+      } catch (err: any) {
+        if (cancelled) return;
+        setError(err.message || "Failed to fetch bounties");
+        setBounties(mockBounties);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, [program, fetchTrigger]);
 
   return { bounties, loading, error, refetch };
 }
@@ -70,6 +83,9 @@ export function useBounty(id: string): UseBountyResult {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
+    let cancelled = false;
+
     async function load() {
       setLoading(true);
       setError(null);
@@ -77,27 +93,35 @@ export function useBounty(id: string): UseBountyResult {
       const mockMatch = mockBounties.find((b) => b.id === id);
 
       if (!program) {
-        setBounty(mockMatch || null);
-        setLoading(false);
+        if (!cancelled) {
+          setBounty(mockMatch || null);
+          setLoading(false);
+        }
         return;
       }
 
       try {
         const bountyKey = new PublicKey(id);
         const account = await fetchBountyAccount(program, bountyKey);
+        if (cancelled) return;
         if (account) {
-          const resolved = await bountyAccountToBounty(account, id);
-          setBounty(resolved);
+          const resolved = await bountyAccountToBounty(account, id, controller.signal);
+          if (!cancelled) setBounty(resolved);
         } else {
-          setBounty(mockMatch || null);
+          if (!cancelled) setBounty(mockMatch || null);
         }
       } catch {
-        setBounty(mockMatch || null);
+        if (!cancelled) setBounty(mockMatch || null);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
     load();
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
   }, [id, program]);
 
   return { bounty, loading, error };
@@ -109,29 +133,42 @@ export function useMyBounties(): UseBountiesResult {
   const [bounties, setBounties] = useState<Bounty[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fetchTrigger, setFetchTrigger] = useState(0);
 
-  const refetch = useCallback(async () => {
-    if (!program || !publicKey) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const accounts = await fetchBountiesByClient(program, publicKey);
-      const resolved = await Promise.all(
-        accounts.map((a) =>
-          bountyAccountToBounty(a.account, a.publicKey.toBase58())
-        )
-      );
-      setBounties(resolved);
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch bounties");
-    } finally {
-      setLoading(false);
-    }
-  }, [program, publicKey]);
+  const refetch = useCallback(() => setFetchTrigger((n) => n + 1), []);
 
   useEffect(() => {
-    refetch();
-  }, [refetch]);
+    if (!program || !publicKey) return;
+
+    const controller = new AbortController();
+    let cancelled = false;
+
+    async function load() {
+      setLoading(true);
+      setError(null);
+      try {
+        const accounts = await fetchBountiesByClient(program!, publicKey!);
+        if (cancelled) return;
+        const resolved = await Promise.all(
+          accounts.map((a) =>
+            bountyAccountToBounty(a.account, a.publicKey.toBase58(), controller.signal)
+          )
+        );
+        if (!cancelled) setBounties(resolved);
+      } catch (err: any) {
+        if (cancelled) return;
+        setError(err.message || "Failed to fetch bounties");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, [program, publicKey, fetchTrigger]);
 
   return { bounties, loading, error, refetch };
 }

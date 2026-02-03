@@ -21,32 +21,47 @@ export function useReviewsForAgent(agentAddress: string): UseReviewsResult {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fetchTrigger, setFetchTrigger] = useState(0);
 
-  const refetch = useCallback(async () => {
-    if (!program || !agentAddress) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const agentKey = new PublicKey(agentAddress);
-      const accounts = await fetchReviewsForAgent(program, agentKey);
-      const resolved = await Promise.all(
-        accounts.map((a) =>
-          reviewAccountToReview(a.account, a.publicKey.toBase58())
-        )
-      );
-      setReviews(resolved.sort((a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      ));
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch reviews");
-    } finally {
-      setLoading(false);
-    }
-  }, [program, agentAddress]);
+  const refetch = useCallback(() => setFetchTrigger((n) => n + 1), []);
 
   useEffect(() => {
-    refetch();
-  }, [refetch]);
+    if (!program || !agentAddress) return;
+
+    const controller = new AbortController();
+    let cancelled = false;
+
+    async function load() {
+      setLoading(true);
+      setError(null);
+      try {
+        const agentKey = new PublicKey(agentAddress);
+        const accounts = await fetchReviewsForAgent(program!, agentKey);
+        if (cancelled) return;
+        const resolved = await Promise.all(
+          accounts.map((a) =>
+            reviewAccountToReview(a.account, a.publicKey.toBase58(), controller.signal)
+          )
+        );
+        if (!cancelled) {
+          setReviews(resolved.sort((a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          ));
+        }
+      } catch (err: any) {
+        if (cancelled) return;
+        setError(err.message || "Failed to fetch reviews");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, [program, agentAddress, fetchTrigger]);
 
   return { reviews, loading, error, refetch };
 }
