@@ -53,3 +53,6 @@ test-ledger/
 .vscode
 *.swp
 *.swo
+
+/docs
+/tests
