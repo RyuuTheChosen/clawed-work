@@ -48,6 +48,11 @@ export default function BountyDetailPage({
   const { bounty, loading: bountyLoading } = useBounty(id);
   const { agent: assignedAgent } = useAgent(bounty?.assignedAgent || "");
 
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const reviewTx = useTransaction();
+
   if (bountyLoading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
@@ -69,11 +74,6 @@ export default function BountyDetailPage({
   }
 
   const status = statusConfig[bounty.status];
-
-  const [reviewRating, setReviewRating] = useState(5);
-  const [reviewComment, setReviewComment] = useState("");
-  const [reviewSubmitted, setReviewSubmitted] = useState(false);
-  const reviewTx = useTransaction();
 
   const handleLeaveReview = async () => {
     if (!connected) { setVisible(true); return; }
