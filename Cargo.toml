@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    "programs/agent-registry",
+    "programs/bounty-escrow",
+]
+resolver = "2"
+
+[workspace.dependencies]
+anchor-lang = "0.30.1"

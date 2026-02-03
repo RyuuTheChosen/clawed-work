@@ -1,0 +1,187 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0a0a0b;
+  --color-foreground: #fafafa;
+  --color-card: #111113;
+  --color-card-hover: #18181b;
+  --color-border: #27272a;
+  --color-muted: #71717a;
+  --color-accent: #f97316;
+  --color-accent-light: #fb923c;
+  --color-success: #22c55e;
+  --color-warning: #eab308;
+  --color-error: #ef4444;
+
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+
+  --animate-fade-in: fadeIn 0.5s ease-out;
+  --animate-slide-up: slideUp 0.5s ease-out;
+  --animate-pulse-slow: pulse 3s infinite;
+  --animate-glow: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes glow {
+  0% { box-shadow: 0 0 20px rgba(249, 115, 22, 0.3); }
+  100% { box-shadow: 0 0 40px rgba(249, 115, 22, 0.6); }
+}
+
+/* Base */
+@layer base {
+  * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
+
+  html,
+  body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    background: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-background);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-muted);
+  }
+
+  ::selection {
+    background: rgba(249, 115, 22, 0.3);
+    color: var(--color-foreground);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  input:not([type="radio"]):not([type="checkbox"]),
+  textarea,
+  select {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: var(--color-foreground);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    transition: border-color 0.2s;
+  }
+
+  input:not([type="radio"]):not([type="checkbox"]):focus,
+  textarea:focus,
+  select:focus {
+    border-color: var(--color-accent);
+    outline: none;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-muted);
+  }
+
+  select option {
+    background-color: var(--color-card);
+    color: var(--color-foreground);
+  }
+}
+
+/* Components */
+@layer components {
+  .card {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    transition: border-color 0.2s;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1rem;
+  }
+
+  .badge-accent {
+    background-color: rgba(249, 115, 22, 0.15);
+    color: #f97316;
+  }
+
+  .badge-success {
+    background-color: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+  }
+
+  .badge-warning {
+    background-color: rgba(234, 179, 8, 0.15);
+    color: #eab308;
+  }
+
+  .badge-error {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+  }
+
+  .noise-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.015;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    z-index: 9999;
+  }
+
+  .gradient-radial {
+    background: radial-gradient(ellipse at top, rgba(249, 115, 22, 0.1) 0%, transparent 50%);
+  }
+
+  .glass {
+    background: rgba(17, 17, 19, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+}
+
+@utility glow-accent {
+  box-shadow: 0 0 30px rgba(249, 115, 22, 0.2);
+}

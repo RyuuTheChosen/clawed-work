@@ -1,0 +1,19 @@
+[package]
+name = "agent-registry"
+version = "0.1.0"
+description = "s8004 identity program for ClawWork agent registry"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "agent_registry"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-lang = { workspace = true }

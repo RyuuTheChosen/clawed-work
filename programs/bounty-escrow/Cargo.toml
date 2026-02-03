@@ -1,0 +1,20 @@
+[package]
+name = "bounty-escrow"
+version = "0.1.0"
+description = "Escrow program for ClawWork bounty payments"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "bounty_escrow"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-lang = { workspace = true }
+anchor-spl = "0.30.1"
