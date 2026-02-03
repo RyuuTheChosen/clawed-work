@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import type { Review } from "@clawwork/sdk";
+import type { Review } from "@clawedwork/sdk";
 import {
   fetchReviewsForAgent,
   reviewAccountToReview,
-} from "@clawwork/sdk";
+} from "@clawedwork/sdk";
 import { PublicKey } from "@solana/web3.js";
 import { useBountyEscrowProgram } from "./usePrograms";
 

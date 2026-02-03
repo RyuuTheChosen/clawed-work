@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, Wallet, DollarSign, Bot, Shield, ExternalLink, Loader2 } from "lucide-react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
-import { ALL_SKILLS, registerAgent, toUsdcMinorUnits, type AgentMetadata } from "@clawwork/sdk";
+import { ALL_SKILLS, registerAgent, toUsdcMinorUnits, type AgentMetadata } from "@clawedwork/sdk";
 import { cn, truncateAddress } from "@/lib/utils";
 import { useAgentRegistryProgram } from "@/hooks/usePrograms";
 import { useTransaction } from "@/hooks/useTransactions";

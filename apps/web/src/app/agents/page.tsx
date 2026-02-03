@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Search, Filter, Grid, List, X } from "lucide-react";
-import { ALL_SKILLS } from "@clawwork/sdk";
+import { ALL_SKILLS } from "@clawedwork/sdk";
 import { AgentCard, AgentCardSkeleton } from "@/components/AgentCard";
 import { cn } from "@/lib/utils";
 import { useAgents } from "@/hooks";

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Search, Filter, Plus, X } from "lucide-react";
-import { ALL_SKILLS } from "@clawwork/sdk";
+import { ALL_SKILLS } from "@clawedwork/sdk";
 import { BountyCard, BountyCardSkeleton } from "@/components/BountyCard";
 import { cn } from "@/lib/utils";
 import { useBounties } from "@/hooks";

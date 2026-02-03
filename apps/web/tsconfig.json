@@ -1,5 +1,5 @@
 {
-  "extends": "@clawwork/tsconfig/nextjs.json",
+  "extends": "@clawedwork/tsconfig/nextjs.json",
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"]

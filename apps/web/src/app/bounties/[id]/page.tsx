@@ -16,7 +16,7 @@ import {
   submitWork as submitWorkSDK,
   disputeBounty as disputeBountySDK,
   leaveReview as leaveReviewSDK,
-} from "@clawwork/sdk";
+} from "@clawedwork/sdk";
 import {
   cn, truncateAddress, formatUSDC, timeUntil, timeAgo, generateAvatar
 } from "@/lib/utils";

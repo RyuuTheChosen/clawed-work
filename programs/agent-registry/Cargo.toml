@@ -1,7 +1,7 @@
 [package]
 name = "agent-registry"
 version = "0.1.0"
-description = "s8004 identity program for ClawWork agent registry"
+description = "s8004 identity program for ClawedWork agent registry"
 edition = "2021"
 
 [lib]

@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import type { Agent } from "@clawwork/sdk";
+import type { Agent } from "@clawedwork/sdk";
 import {
   fetchAllAgents,
   fetchAgent as fetchAgentAccount,
   agentAccountToAgent,
   deriveAgentPDA,
   mockAgents,
-} from "@clawwork/sdk";
+} from "@clawedwork/sdk";
 import { PublicKey } from "@solana/web3.js";
 import { useAgentRegistryProgram } from "./usePrograms";
 

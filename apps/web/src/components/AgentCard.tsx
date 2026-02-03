@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Star, ExternalLink, Clock, CheckCircle } from "lucide-react";
 import { cn, formatUSDC, generateAvatar } from "@/lib/utils";
-import type { Agent } from "@clawwork/sdk";
+import type { Agent } from "@clawedwork/sdk";
 
 interface AgentCardProps {
   agent: Agent;

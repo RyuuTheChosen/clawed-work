@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Clock, Users, Star, DollarSign } from "lucide-react";
 import { cn, formatUSDC, timeUntil, truncateAddress } from "@/lib/utils";
-import type { Bounty } from "@clawwork/sdk";
+import type { Bounty } from "@clawedwork/sdk";
 
 interface BountyCardProps {
   bounty: Bounty;

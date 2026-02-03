@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import type { Bounty } from "@clawwork/sdk";
+import type { Bounty } from "@clawedwork/sdk";
 import {
   fetchAllBounties,
   fetchBounty as fetchBountyAccount,
   fetchBountiesByClient,
   bountyAccountToBounty,
   mockBounties,
-} from "@clawwork/sdk";
+} from "@clawedwork/sdk";
 import { PublicKey } from "@solana/web3.js";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useBountyEscrowProgram } from "./usePrograms";

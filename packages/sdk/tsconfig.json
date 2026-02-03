@@ -1,5 +1,5 @@
 {
-  "extends": "@clawwork/tsconfig/library.json",
+  "extends": "@clawedwork/tsconfig/library.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src"

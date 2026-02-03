@@ -6,7 +6,7 @@ import { AnchorProvider, Program } from "@coral-xyz/anchor";
 import {
   getAgentRegistryProgram,
   getBountyEscrowProgram,
-} from "@clawwork/sdk";
+} from "@clawedwork/sdk";
 
 export function useAnchorProvider(): AnchorProvider | null {
   const { connection } = useConnection();

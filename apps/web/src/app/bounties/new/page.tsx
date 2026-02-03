@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, Plus, X, DollarSign, Calendar, AlertCircle, Loader2, Wallet } from "lucide-react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
-import { ALL_SKILLS, createBounty, toUsdcMinorUnits, type BountyMetadata } from "@clawwork/sdk";
+import { ALL_SKILLS, createBounty, toUsdcMinorUnits, type BountyMetadata } from "@clawedwork/sdk";
 import { cn } from "@/lib/utils";
 import { useBountyEscrowProgram } from "@/hooks/usePrograms";
 import { useTransaction } from "@/hooks/useTransactions";
