@@ -12,6 +12,11 @@ import {
 import { PublicKey } from "@solana/web3.js";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useBountyEscrowProgram } from "./usePrograms";
+import { getCached, setCache } from "@/lib/rpc-cache";
+
+const CACHE_KEY_ALL = "bounties:all";
+const bountyCacheKey = (id: string) => `bounties:${id}`;
+const myBountiesCacheKey = (wallet: string) => `bounties:my:${wallet}`;
 
 interface UseBountiesResult {
   bounties: Bounty[];
@@ -22,7 +27,10 @@ interface UseBountiesResult {
 
 export function useBounties(): UseBountiesResult {
   const program = useBountyEscrowProgram();
-  const [bounties, setBounties] = useState<Bounty[]>([]);
+  const [bounties, setBounties] = useState<Bounty[]>(() => {
+    const cached = getCached<Bounty[]>(CACHE_KEY_ALL);
+    return cached ? cached.data : [];
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fetchTrigger, setFetchTrigger] = useState(0);
@@ -31,6 +39,12 @@ export function useBounties(): UseBountiesResult {
 
   useEffect(() => {
     if (!program) return;
+
+    const cached = getCached<Bounty[]>(CACHE_KEY_ALL);
+    if (cached && !cached.stale && fetchTrigger === 0) {
+      setBounties(cached.data);
+      return;
+    }
 
     const controller = new AbortController();
     let cancelled = false;
@@ -50,7 +64,10 @@ export function useBounties(): UseBountiesResult {
             bountyAccountToBounty(a.account, a.publicKey.toBase58(), controller.signal)
           )
         );
-        if (!cancelled) setBounties(resolved);
+        if (!cancelled) {
+          setBounties(resolved);
+          setCache(CACHE_KEY_ALL, resolved);
+        }
       } catch (err: any) {
         if (cancelled) return;
         setError(err.message || "Failed to fetch bounties");
@@ -78,11 +95,21 @@ interface UseBountyResult {
 
 export function useBounty(id: string): UseBountyResult {
   const program = useBountyEscrowProgram();
-  const [bounty, setBounty] = useState<Bounty | null>(null);
+  const [bounty, setBounty] = useState<Bounty | null>(() => {
+    const cached = getCached<Bounty>(bountyCacheKey(id));
+    return cached ? cached.data : null;
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const cached = getCached<Bounty>(bountyCacheKey(id));
+    if (cached && !cached.stale) {
+      setBounty(cached.data);
+      setLoading(false);
+      return;
+    }
+
     const controller = new AbortController();
     let cancelled = false;
 
@@ -106,7 +133,10 @@ export function useBounty(id: string): UseBountyResult {
         if (cancelled) return;
         if (account) {
           const resolved = await bountyAccountToBounty(account, id, controller.signal);
-          if (!cancelled) setBounty(resolved);
+          if (!cancelled) {
+            setBounty(resolved);
+            setCache(bountyCacheKey(id), resolved);
+          }
         } else {
           if (!cancelled) setBounty(mockMatch || null);
         }
@@ -130,7 +160,12 @@ export function useBounty(id: string): UseBountyResult {
 export function useMyBounties(): UseBountiesResult {
   const program = useBountyEscrowProgram();
   const { publicKey } = useWallet();
-  const [bounties, setBounties] = useState<Bounty[]>([]);
+  const walletStr = publicKey?.toBase58() || "";
+  const [bounties, setBounties] = useState<Bounty[]>(() => {
+    if (!walletStr) return [];
+    const cached = getCached<Bounty[]>(myBountiesCacheKey(walletStr));
+    return cached ? cached.data : [];
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fetchTrigger, setFetchTrigger] = useState(0);
@@ -139,6 +174,13 @@ export function useMyBounties(): UseBountiesResult {
 
   useEffect(() => {
     if (!program || !publicKey) return;
+
+    const cacheKey = myBountiesCacheKey(publicKey.toBase58());
+    const cached = getCached<Bounty[]>(cacheKey);
+    if (cached && !cached.stale && fetchTrigger === 0) {
+      setBounties(cached.data);
+      return;
+    }
 
     const controller = new AbortController();
     let cancelled = false;
@@ -154,7 +196,10 @@ export function useMyBounties(): UseBountiesResult {
             bountyAccountToBounty(a.account, a.publicKey.toBase58(), controller.signal)
           )
         );
-        if (!cancelled) setBounties(resolved);
+        if (!cancelled) {
+          setBounties(resolved);
+          setCache(cacheKey, resolved);
+        }
       } catch (err: any) {
         if (cancelled) return;
         setError(err.message || "Failed to fetch bounties");

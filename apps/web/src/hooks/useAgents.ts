@@ -11,6 +11,10 @@ import {
 } from "@clawedwork/sdk";
 import { PublicKey } from "@solana/web3.js";
 import { useAgentRegistryProgram } from "./usePrograms";
+import { getCached, setCache } from "@/lib/rpc-cache";
+
+const CACHE_KEY_ALL = "agents:all";
+const agentCacheKey = (addr: string) => `agents:${addr}`;
 
 interface UseAgentsResult {
   agents: Agent[];
@@ -21,7 +25,10 @@ interface UseAgentsResult {
 
 export function useAgents(): UseAgentsResult {
   const program = useAgentRegistryProgram();
-  const [agents, setAgents] = useState<Agent[]>([]);
+  const [agents, setAgents] = useState<Agent[]>(() => {
+    const cached = getCached<Agent[]>(CACHE_KEY_ALL);
+    return cached ? cached.data : [];
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fetchTrigger, setFetchTrigger] = useState(0);
@@ -30,6 +37,13 @@ export function useAgents(): UseAgentsResult {
 
   useEffect(() => {
     if (!program) return;
+
+    // Skip fetch if cache is fresh (unless explicit refetch)
+    const cached = getCached<Agent[]>(CACHE_KEY_ALL);
+    if (cached && !cached.stale && fetchTrigger === 0) {
+      setAgents(cached.data);
+      return;
+    }
 
     const controller = new AbortController();
     let cancelled = false;
@@ -49,7 +63,10 @@ export function useAgents(): UseAgentsResult {
             agentAccountToAgent(a.account, a.publicKey.toBase58(), controller.signal)
           )
         );
-        if (!cancelled) setAgents(resolved);
+        if (!cancelled) {
+          setAgents(resolved);
+          setCache(CACHE_KEY_ALL, resolved);
+        }
       } catch (err: any) {
         if (cancelled) return;
         setError(err.message || "Failed to fetch agents");
@@ -77,11 +94,21 @@ interface UseAgentResult {
 
 export function useAgent(address: string): UseAgentResult {
   const program = useAgentRegistryProgram();
-  const [agent, setAgent] = useState<Agent | null>(null);
+  const [agent, setAgent] = useState<Agent | null>(() => {
+    const cached = getCached<Agent>(agentCacheKey(address));
+    return cached ? cached.data : null;
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const cached = getCached<Agent>(agentCacheKey(address));
+    if (cached && !cached.stale) {
+      setAgent(cached.data);
+      setLoading(false);
+      return;
+    }
+
     const controller = new AbortController();
     let cancelled = false;
 
@@ -106,7 +133,10 @@ export function useAgent(address: string): UseAgentResult {
         if (account) {
           const [agentPda] = deriveAgentPDA(ownerKey);
           const resolved = await agentAccountToAgent(account, agentPda.toBase58(), controller.signal);
-          if (!cancelled) setAgent(resolved);
+          if (!cancelled) {
+            setAgent(resolved);
+            setCache(agentCacheKey(address), resolved);
+          }
         } else {
           if (!cancelled) setAgent(mockMatch || null);
         }
