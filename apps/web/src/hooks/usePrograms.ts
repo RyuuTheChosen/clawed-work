@@ -6,8 +6,6 @@ import { AnchorProvider, Program } from "@coral-xyz/anchor";
 import {
   getAgentRegistryProgram,
   getBountyEscrowProgram,
-  type AgentRegistry,
-  type BountyEscrow,
 } from "@clawwork/sdk";
 
 export function useAnchorProvider(): AnchorProvider | null {
@@ -30,7 +28,7 @@ export function useAnchorProvider(): AnchorProvider | null {
   }, [connection, wallet]);
 }
 
-export function useAgentRegistryProgram(): Program<AgentRegistry> | null {
+export function useAgentRegistryProgram(): Program<any> | null {
   const provider = useAnchorProvider();
   return useMemo(() => {
     if (!provider) return null;
@@ -38,7 +36,7 @@ export function useAgentRegistryProgram(): Program<AgentRegistry> | null {
   }, [provider]);
 }
 
-export function useBountyEscrowProgram(): Program<BountyEscrow> | null {
+export function useBountyEscrowProgram(): Program<any> | null {
   const provider = useAnchorProvider();
   return useMemo(() => {
     if (!provider) return null;

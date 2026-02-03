@@ -1,6 +1,8 @@
 export type BountyEscrow = {
   version: "0.1.0";
   name: "bounty_escrow";
+  address: string;
+  metadata: { name: string; version: string; spec: string };
   instructions: [
     {
       name: "initClient";
@@ -157,6 +159,8 @@ export type BountyEscrow = {
 export const IDL: BountyEscrow = {
   version: "0.1.0",
   name: "bounty_escrow",
+  address: "BntyEscrw111111111111111111111111111111111",
+  metadata: { name: "bounty_escrow", version: "0.1.0", spec: "0.1.0" },
   instructions: [
     {
       name: "initClient",

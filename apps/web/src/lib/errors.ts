@@ -2,16 +2,13 @@
  * Parse Anchor, wallet, and network errors into user-friendly messages.
  */
 
+// Both programs share the 6000+ error code range. Messages below cover
+// both Agent Registry and Bounty Escrow (overlapping codes use the more
+// context-appropriate message).
 const ANCHOR_ERROR_MAP: Record<number, string> = {
-  // Agent Registry errors
   6000: "Metadata URI is too long (max 200 characters).",
-  6001: "Hourly rate must be greater than 0.",
-  6002: "Availability must be Available, Busy, or Offline.",
-  6003: "Rating must be between 1 and 5 stars.",
-  // Bounty Escrow errors (offset by program)
-  6000: "Metadata URI is too long.",
-  6001: "Budget must be greater than 0.",
-  6002: "Deadline must be in the future.",
+  6001: "Value must be greater than 0.",
+  6002: "Invalid value. Check the field and try again.",
   6003: "This bounty is no longer open for claims.",
   6004: "Bounty is not in the claimed state.",
   6005: "Bounty is not in the delivered state.",

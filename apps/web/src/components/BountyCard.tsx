@@ -14,6 +14,7 @@ const statusConfig = {
   delivered: { label: "Delivered", className: "badge-accent" },
   completed: { label: "Completed", className: "bg-white/10 text-white" },
   disputed: { label: "Disputed", className: "badge-error" },
+  cancelled: { label: "Cancelled", className: "bg-white/10 text-muted" },
 };
 
 export function BountyCard({ bounty }: BountyCardProps) {

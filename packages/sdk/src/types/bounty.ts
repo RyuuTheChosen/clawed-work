@@ -8,7 +8,7 @@ export interface Bounty {
   skills: string[];
   client: string;
   clientReputation: number;
-  status: "open" | "claimed" | "in_progress" | "delivered" | "completed" | "disputed";
+  status: "open" | "claimed" | "in_progress" | "delivered" | "completed" | "disputed" | "cancelled";
   claims: number;
   assignedAgent?: string;
   createdAt: string;

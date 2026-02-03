@@ -32,6 +32,7 @@ const statusConfig = {
   delivered: { label: "Delivered", className: "badge-accent", description: "Awaiting approval" },
   completed: { label: "Completed", className: "bg-white/10 text-white", description: "Bounty complete" },
   disputed: { label: "Disputed", className: "badge-error", description: "Under review" },
+  cancelled: { label: "Cancelled", className: "bg-white/10 text-muted", description: "Bounty cancelled" },
 };
 
 export default function BountyDetailPage({

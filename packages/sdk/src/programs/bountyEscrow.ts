@@ -1,13 +1,17 @@
 import { Program, AnchorProvider, BN } from "@coral-xyz/anchor";
 import { PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID, getAssociatedTokenAddress } from "@solana/spl-token";
-import { BountyEscrowIDL, type BountyEscrow } from "../idl";
+import { BountyEscrowIDL } from "../idl";
 import { BOUNTY_ESCROW_PROGRAM_ID } from "../constants/programs";
 
-export function getBountyEscrowProgram(provider: AnchorProvider): Program<BountyEscrow> {
-  return new Program<BountyEscrow>(
-    BountyEscrowIDL,
-    new PublicKey(BOUNTY_ESCROW_PROGRAM_ID),
+// Use `any` for the Program generic – the legacy IDL format is supported at
+// runtime by Anchor 0.30 but its TS types expect the new IDL spec.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type BountyEscrowProgram = any;
+
+export function getBountyEscrowProgram(provider: AnchorProvider): BountyEscrowProgram {
+  return new Program(
+    BountyEscrowIDL as any,
     provider
   );
 }
@@ -35,7 +39,7 @@ export function deriveVaultPDA(bounty: PublicKey): [PublicKey, number] {
   );
 }
 
-export async function initClient(program: Program<BountyEscrow>): Promise<string> {
+export async function initClient(program: BountyEscrowProgram): Promise<string> {
   const client = program.provider.publicKey!;
   const [clientStatePda] = deriveClientStatePDA(client);
 
@@ -52,7 +56,7 @@ export async function initClient(program: Program<BountyEscrow>): Promise<string
 }
 
 export async function createBounty(
-  program: Program<BountyEscrow>,
+  program: BountyEscrowProgram,
   metadataUri: string,
   budget: number,
   deadline: number,
@@ -95,7 +99,7 @@ export async function createBounty(
 }
 
 export async function claimBounty(
-  program: Program<BountyEscrow>,
+  program: BountyEscrowProgram,
   bountyPda: PublicKey
 ): Promise<string> {
   const agent = program.provider.publicKey!;
@@ -112,7 +116,7 @@ export async function claimBounty(
 }
 
 export async function submitWork(
-  program: Program<BountyEscrow>,
+  program: BountyEscrowProgram,
   bountyPda: PublicKey,
   deliverableUri: string
 ): Promise<string> {
@@ -130,7 +134,7 @@ export async function submitWork(
 }
 
 export async function approveWork(
-  program: Program<BountyEscrow>,
+  program: BountyEscrowProgram,
   bountyPda: PublicKey
 ): Promise<string> {
   const client = program.provider.publicKey!;
@@ -156,7 +160,7 @@ export async function approveWork(
 }
 
 export async function disputeBounty(
-  program: Program<BountyEscrow>,
+  program: BountyEscrowProgram,
   bountyPda: PublicKey
 ): Promise<string> {
   const authority = program.provider.publicKey!;
@@ -173,7 +177,7 @@ export async function disputeBounty(
 }
 
 export async function cancelBounty(
-  program: Program<BountyEscrow>,
+  program: BountyEscrowProgram,
   bountyPda: PublicKey,
   usdcMint: PublicKey
 ): Promise<string> {
@@ -203,7 +207,7 @@ export function deriveReviewPDA(bounty: PublicKey): [PublicKey, number] {
 }
 
 export async function leaveReview(
-  program: Program<BountyEscrow>,
+  program: BountyEscrowProgram,
   bountyPda: PublicKey,
   rating: number,
   commentUri: string
@@ -235,7 +239,7 @@ export interface ReviewAccount {
 }
 
 export async function fetchReview(
-  program: Program<BountyEscrow>,
+  program: BountyEscrowProgram,
   bountyPda: PublicKey
 ): Promise<ReviewAccount | null> {
   const [reviewPda] = deriveReviewPDA(bountyPda);
@@ -248,7 +252,7 @@ export async function fetchReview(
 }
 
 export async function fetchReviewsForAgent(
-  program: Program<BountyEscrow>,
+  program: BountyEscrowProgram,
   agent: PublicKey
 ): Promise<{ publicKey: PublicKey; account: ReviewAccount }[]> {
   const accounts = await program.account.review.all([
@@ -279,7 +283,7 @@ export interface BountyAccount {
 }
 
 export async function fetchBounty(
-  program: Program<BountyEscrow>,
+  program: BountyEscrowProgram,
   bountyPda: PublicKey
 ): Promise<BountyAccount | null> {
   try {
@@ -291,14 +295,14 @@ export async function fetchBounty(
 }
 
 export async function fetchAllBounties(
-  program: Program<BountyEscrow>
+  program: BountyEscrowProgram
 ): Promise<{ publicKey: PublicKey; account: BountyAccount }[]> {
   const accounts = await program.account.bounty.all();
   return accounts as { publicKey: PublicKey; account: BountyAccount }[];
 }
 
 export async function fetchBountiesByClient(
-  program: Program<BountyEscrow>,
+  program: BountyEscrowProgram,
   client: PublicKey
 ): Promise<{ publicKey: PublicKey; account: BountyAccount }[]> {
   const accounts = await program.account.bounty.all([

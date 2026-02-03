@@ -1,12 +1,16 @@
 import { Program, AnchorProvider, BN } from "@coral-xyz/anchor";
 import { PublicKey, SystemProgram } from "@solana/web3.js";
-import { AgentRegistryIDL, type AgentRegistry } from "../idl";
+import { AgentRegistryIDL } from "../idl";
 import { AGENT_REGISTRY_PROGRAM_ID } from "../constants/programs";
 
-export function getAgentRegistryProgram(provider: AnchorProvider): Program<AgentRegistry> {
-  return new Program<AgentRegistry>(
-    AgentRegistryIDL,
-    new PublicKey(AGENT_REGISTRY_PROGRAM_ID),
+// Use `any` for the Program generic – the legacy IDL format is supported at
+// runtime by Anchor 0.30 but its TS types expect the new IDL spec.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AgentRegistryProgram = any;
+
+export function getAgentRegistryProgram(provider: AnchorProvider): AgentRegistryProgram {
+  return new Program(
+    AgentRegistryIDL as any,
     provider
   );
 }
@@ -19,7 +23,7 @@ export function deriveAgentPDA(owner: PublicKey): [PublicKey, number] {
 }
 
 export async function registerAgent(
-  program: Program<AgentRegistry>,
+  program: AgentRegistryProgram,
   metadataUri: string,
   hourlyRate: number
 ): Promise<string> {
@@ -39,7 +43,7 @@ export async function registerAgent(
 }
 
 export async function updateAgent(
-  program: Program<AgentRegistry>,
+  program: AgentRegistryProgram,
   metadataUri: string | null,
   hourlyRate: number | null,
   availability: number | null
@@ -75,7 +79,7 @@ export interface AgentAccount {
 }
 
 export async function fetchAgent(
-  program: Program<AgentRegistry>,
+  program: AgentRegistryProgram,
   owner: PublicKey
 ): Promise<AgentAccount | null> {
   const [agentPda] = deriveAgentPDA(owner);
@@ -88,7 +92,7 @@ export async function fetchAgent(
 }
 
 export async function fetchAllAgents(
-  program: Program<AgentRegistry>
+  program: AgentRegistryProgram
 ): Promise<{ publicKey: PublicKey; account: AgentAccount }[]> {
   const accounts = await program.account.agent.all();
   return accounts as { publicKey: PublicKey; account: AgentAccount }[];
