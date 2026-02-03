@@ -3,8 +3,8 @@ seeds = true
 skip-lint = false
 
 [programs.devnet]
-agent_registry = "AgntReg1stry111111111111111111111111111111"
-bounty_escrow = "BntyEscrw111111111111111111111111111111111"
+agent_registry = "DiLuZ4JcnyFcE6FttH5NryQJrM2KKewy2Z8oDk9iJXNF"
+bounty_escrow = "2KY4RJwdYKnnDMU4WcuwgU2f8B7JoxjdKaTYL953AKb5"
 
 [registry]
 url = "https://api.apr.dev"

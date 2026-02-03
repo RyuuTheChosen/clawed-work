@@ -159,7 +159,7 @@ export type BountyEscrow = {
 export const IDL: BountyEscrow = {
   version: "0.1.0",
   name: "bounty_escrow",
-  address: "BntyEscrw111111111111111111111111111111111",
+  address: "2KY4RJwdYKnnDMU4WcuwgU2f8B7JoxjdKaTYL953AKb5",
   metadata: { name: "bounty_escrow", version: "0.1.0", spec: "0.1.0" },
   instructions: [
     {

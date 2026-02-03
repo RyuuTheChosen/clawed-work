@@ -75,7 +75,7 @@ export type AgentRegistry = {
 export const IDL: AgentRegistry = {
   version: "0.1.0",
   name: "agent_registry",
-  address: "AgntReg1stry111111111111111111111111111111",
+  address: "DiLuZ4JcnyFcE6FttH5NryQJrM2KKewy2Z8oDk9iJXNF",
   metadata: { name: "agent_registry", version: "0.1.0", spec: "0.1.0" },
   instructions: [
     {
