@@ -38,6 +38,8 @@ yarn-error.log*
 
 # vercel
 .vercel
+vercel.json
+vercel.svg
 
 # typescript
 *.tsbuildinfo
@@ -60,5 +62,3 @@ test-ledger/
 # Debugging
 debug.md/
 
-
-.vercel
