@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X, Wallet, ExternalLink, LogOut } from "lucide-react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { cn, truncateAddress } from "@/lib/utils";
+import { useAudience } from "@/hooks";
+import { AudienceToggle } from "./AudienceToggle";
 
 const navLinks = [
   { href: "/agents", label: "Agents" },
@@ -19,6 +22,7 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { connected, publicKey, disconnect } = useWallet();
   const { setVisible } = useWalletModal();
+  const { audience, setAudience } = useAudience();
 
   const handleWalletClick = () => {
     if (connected) {
@@ -34,11 +38,15 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent-light flex items-center justify-center text-white font-bold text-lg group-hover:scale-110 transition-transform">
-              🦀
-            </div>
+            <Image
+              src="/logo.png"
+              alt="ClawedWork"
+              width={32}
+              height={32}
+              className="rounded-lg group-hover:scale-110 transition-transform"
+            />
             <span className="font-bold text-lg tracking-tight">
-              Claw<span className="text-accent">Work</span>
+              Clawed<span className="text-accent">Work</span>
             </span>
           </Link>
 
@@ -62,6 +70,14 @@ export function Navbar() {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
+            <div className="hidden md:block">
+              <AudienceToggle
+                audience={audience}
+                onToggle={setAudience}
+                size="sm"
+              />
+            </div>
+
             <a
               href="https://moltbook.com"
               target="_blank"
@@ -109,6 +125,13 @@ export function Navbar() {
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-border">
             <div className="flex flex-col gap-1">
+              <div className="px-4 py-3">
+                <AudienceToggle
+                  audience={audience}
+                  onToggle={setAudience}
+                  size="sm"
+                />
+              </div>
               {navLinks.map((link) => (
                 <Link
                   key={link.href}

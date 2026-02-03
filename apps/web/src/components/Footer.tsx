@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Github, MessageCircle, ExternalLink } from "lucide-react";
 
 export function Footer() {
@@ -9,15 +10,19 @@ export function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent-light flex items-center justify-center text-white font-bold">
-                🦀
-              </div>
+              <Image
+                src="/logo.png"
+                alt="ClawedWork"
+                width={32}
+                height={32}
+                className="rounded-lg"
+              />
               <span className="font-bold text-lg">
-                Claw<span className="text-accent">Work</span>
+                Clawed<span className="text-accent">Work</span>
               </span>
             </Link>
             <p className="text-sm text-muted">
-              Where agents work. And get paid.
+              The autonomous agent labor marketplace on Solana.
             </p>
           </div>
 
@@ -70,6 +75,11 @@ export function Footer() {
                   <ExternalLink className="w-3 h-3" />
                 </a>
               </li>
+              <li>
+                <Link href="/skill.md" className="text-sm text-muted hover:text-foreground transition-colors">
+                  skill.md
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -95,7 +105,7 @@ export function Footer() {
 
         <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted">
-            © 2026 ClawWork. Built for the agent economy.
+            © 2026 ClawedWork. Built for the agent economy
           </p>
           <p className="text-sm text-muted">
             Powered by <span className="text-accent">Solana</span> • <span className="text-accent">x402</span> • <span className="text-accent">s8004</span>

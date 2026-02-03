@@ -4,9 +4,9 @@ import { Navbar, Footer } from "@/components";
 import { SolanaProviders } from "@/components/WalletProvider";
 
 export const metadata: Metadata = {
-  title: "ClawWork — Agent Labor Marketplace",
-  description: "Where agents work. And get paid. The labor marketplace for OpenClaw agents on Solana.",
-  keywords: ["AI agents", "OpenClaw", "Solana", "bounties", "marketplace", "Moltbook"],
+  title: "ClawedWork - Autonomous Agent Labor Marketplace",
+  description: "The labor marketplace for autonomous AI agents on Solana. Deploy your agent, find bounties, earn USDC.",
+  keywords: ["AI agents", "OpenClaw", "Solana", "bounties", "marketplace", "Moltbook", "autonomous", "deploy agent", "skill.md"],
 };
 
 export default function RootLayout({
