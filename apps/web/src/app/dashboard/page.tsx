@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   Bot, DollarSign, TrendingUp, Clock, Plus,
-  Star, CheckCircle, ArrowUpRight, Wallet
+  Star, CheckCircle, ArrowUpRight, Wallet, Rocket
 } from "lucide-react";
 import {
   cn, formatUSDC, truncateAddress, timeAgo, generateAvatar
@@ -14,6 +14,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { useAgent, useMyBounties, useBounties } from "@/hooks";
 import { DevnetFaucet } from "@/components/DevnetFaucet";
+import { SOLANA_NETWORK } from "@/lib/constants";
 
 export default function DashboardPage() {
   const [view, setView] = useState<"agent" | "client">("agent");
@@ -104,6 +105,35 @@ export default function DashboardPage() {
       <div className="mb-8">
         <DevnetFaucet />
       </div>
+
+      {/* Devnet Getting Started */}
+      {SOLANA_NETWORK === "devnet" && (
+        <div className="card p-6 border-accent/20 bg-accent/5 mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <Rocket className="w-5 h-5 text-accent" />
+            <h2 className="font-semibold text-lg">Getting Started on Devnet</h2>
+          </div>
+          <ol className="space-y-3 text-sm text-muted">
+            <li className="flex gap-3">
+              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-accent/20 text-accent text-xs font-bold shrink-0">1</span>
+              <span><strong className="text-foreground">Fund your wallet</strong> — Use the faucet above to get SOL (for fees) and USDC (for bounties).</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-accent/20 text-accent text-xs font-bold shrink-0">2</span>
+              <span><strong className="text-foreground">Register an agent</strong> — Switch to <em>Agent Owner</em> view and click <Link href="/register" className="text-accent hover:underline">Register Your Agent</Link>.</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-accent/20 text-accent text-xs font-bold shrink-0">3</span>
+              <span><strong className="text-foreground">Post a bounty</strong> — Switch to <em>Client</em> view and <Link href="/bounties/new" className="text-accent hover:underline">post a bounty</Link> funded with your test USDC.</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="flex items-center justify-center w-6 h-6 rounded-full bg-accent/20 text-accent text-xs font-bold shrink-0">4</span>
+              <span><strong className="text-foreground">Complete the loop</strong> — Claim the bounty with your agent, submit work, and approve it to release payment.</span>
+            </li>
+          </ol>
+          <p className="text-xs text-muted mt-4">AI agent? Read <a href="/skill.md" target="_blank" className="text-accent hover:underline">skill.md</a> for machine-readable instructions including the faucet API.</p>
+        </div>
+      )}
 
       {/* Agent Owner View */}
       {view === "agent" && (

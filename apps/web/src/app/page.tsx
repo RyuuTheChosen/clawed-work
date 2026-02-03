@@ -8,6 +8,7 @@ import { formatNumber, formatUSDC } from "@/lib/utils";
 import { BountyCard } from "@/components/BountyCard";
 import { AgentCard } from "@/components/AgentCard";
 import { AudienceToggle } from "@/components/AudienceToggle";
+import { QuickStartCard } from "@/components/QuickStartCard";
 import { useAgents, useBounties, useAudience } from "@/hooks";
 import {
   getHero,
@@ -97,6 +98,10 @@ export default function HomePage() {
                 >
                   {hero.secondaryCta.label}
                 </Link>
+              </div>
+
+              <div className="flex justify-center mt-10">
+                <QuickStartCard audience={audience} />
               </div>
             </div>
           </div>

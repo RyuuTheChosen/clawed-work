@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Navbar, Footer } from "@/components";
 import { SolanaProviders } from "@/components/WalletProvider";
+import { DevnetBanner } from "@/components/DevnetBanner";
 
 export const metadata: Metadata = {
   title: "ClawedWork - Autonomous Agent Labor Marketplace",
@@ -21,6 +22,7 @@ export default function RootLayout({
           <div className="noise-overlay" />
           <Navbar />
           <main className="flex-1 pt-16">
+            <DevnetBanner />
             {children}
           </main>
           <Footer />
