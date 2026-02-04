@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { useBountyEscrowProgram } from "@/hooks/usePrograms";
 import { useTransaction } from "@/hooks/useTransactions";
 import { TransactionToast } from "@/components/TransactionToast";
-import { USDC_MINT } from "@/lib/constants";
+import { getUsdcMint } from "@/lib/constants";
 
 export default function NewBountyPage() {
   const router = useRouter();
@@ -71,7 +71,7 @@ export default function NewBountyPage() {
     const deadlineTs = Math.floor(new Date(deadline).getTime() / 1000);
 
     const sig = await tx.execute(() =>
-      createBounty(program, metadataUri, budgetMinorUnits, deadlineTs, USDC_MINT)
+      createBounty(program, metadataUri, budgetMinorUnits, deadlineTs, getUsdcMint())
     );
 
     if (sig) {

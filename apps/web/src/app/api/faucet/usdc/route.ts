@@ -13,10 +13,16 @@ import {
 const SOLANA_NETWORK = process.env.NEXT_PUBLIC_SOLANA_NETWORK || "devnet";
 const RPC_URL =
   process.env.SOLANA_RPC_URL || process.env.NEXT_PUBLIC_SOLANA_RPC_URL || clusterApiUrl("devnet");
-const USDC_MINT = new PublicKey(
-  process.env.NEXT_PUBLIC_USDC_MINT ||
-    "6S5d1sgeLxQA2NiwuZ5CDryvxmLgWqs44da4XG3Nd4wZ"
-);
+const USDC_MINT_STR =
+  process.env.NEXT_PUBLIC_USDC_MINT || "6S5d1sgeLxQA2NiwuZ5CDryvxmLgWqs44da4XG3Nd4wZ";
+
+let _usdcMint: PublicKey | null = null;
+function getUsdcMint(): PublicKey {
+  if (!_usdcMint) {
+    _usdcMint = new PublicKey(USDC_MINT_STR);
+  }
+  return _usdcMint;
+}
 
 // 1,000 USDC = 1_000_000_000 minor units (6 decimals)
 const MINT_AMOUNT = 1_000_000_000;
@@ -182,17 +188,19 @@ export async function POST(req: NextRequest) {
   try {
     const connection = getConnection();
 
+    const usdcMint = getUsdcMint();
+
     const tokenAccount = await getOrCreateAssociatedTokenAccount(
       connection,
       mintAuthority,
-      USDC_MINT,
+      usdcMint,
       recipient
     );
 
     const signature = await mintTo(
       connection,
       mintAuthority,
-      USDC_MINT,
+      usdcMint,
       tokenAccount.address,
       mintAuthority,
       MINT_AMOUNT

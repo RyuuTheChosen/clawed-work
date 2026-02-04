@@ -3,7 +3,18 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "env": [
+        "NEXT_PUBLIC_SOLANA_RPC_URL",
+        "NEXT_PUBLIC_SOLANA_NETWORK",
+        "NEXT_PUBLIC_USDC_MINT",
+        "NEXT_PUBLIC_AGENT_REGISTRY_PROGRAM_ID",
+        "NEXT_PUBLIC_BOUNTY_ESCROW_PROGRAM_ID",
+        "SOLANA_RPC_URL",
+        "FAUCET_MINT_AUTHORITY",
+        "UPSTASH_REDIS_REST_URL",
+        "UPSTASH_REDIS_REST_TOKEN"
+      ]
     },
     "dev": {
       "cache": false,
